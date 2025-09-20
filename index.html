@@ -1,4 +1,4 @@
-<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+      background: #000; /* Black background */
       color: #fff;
       display: flex;
       justify-content: center;
@@ -16,12 +16,12 @@
       margin: 0;
     }
     .container {
-      background: #2e2e44;
+      background: #1a1a1a; /* Dark gray for contrast */
       padding: 20px 30px;
       border-radius: 15px;
-      box-shadow: 0px 4px 20px rgba(0,0,0,0.5);
+      box-shadow: 0px 4px 20px rgba(0,0,0,0.8);
       text-align: center;
-      max-width: 400px;
+      max-width: 420px;
       width: 100%;
     }
     h1 {
@@ -34,8 +34,19 @@
     }
     .frequency-display {
       font-size: 1.2rem;
-      margin-bottom: 20px;
+      margin: 10px 0;
       font-weight: bold;
+    }
+    .manual-input {
+      margin: 10px 0 20px;
+    }
+    .manual-input input {
+      width: 120px;
+      padding: 6px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      text-align: center;
     }
     button {
       background: #4CAF50;
@@ -45,6 +56,7 @@
       font-size: 1rem;
       color: white;
       cursor: pointer;
+      margin: 5px;
       transition: background 0.3s ease;
     }
     button:hover {
@@ -63,6 +75,12 @@
     <h1>Frequency Generator</h1>
     <input type="range" id="freqSlider" min="20" max="12000" value="440" step="1">
     <div class="frequency-display" id="freqDisplay">440 Hz</div>
+
+    <div class="manual-input">
+      <label for="freqInput">Enter frequency:</label><br>
+      <input type="number" id="freqInput" min="20" max="12000" value="440">
+    </div>
+
     <button id="playBtn">Play</button>
     <button id="stopBtn" class="stop">Stop</button>
   </div>
@@ -74,12 +92,24 @@
     const display = document.getElementById("freqDisplay");
     const playBtn = document.getElementById("playBtn");
     const stopBtn = document.getElementById("stopBtn");
+    const freqInput = document.getElementById("freqInput");
+
+    function updateFrequency(value) {
+      value = Math.min(12000, Math.max(20, value)); // clamp between 20–12000
+      slider.value = value;
+      freqInput.value = value;
+      display.textContent = value + " Hz";
+      if (oscillator) {
+        oscillator.frequency.setValueAtTime(value, audioCtx.currentTime);
+      }
+    }
 
     slider.addEventListener("input", () => {
-      display.textContent = slider.value + " Hz";
-      if (oscillator) {
-        oscillator.frequency.setValueAtTime(slider.value, audioCtx.currentTime);
-      }
+      updateFrequency(slider.value);
+    });
+
+    freqInput.addEventListener("input", () => {
+      updateFrequency(freqInput.value);
     });
 
     playBtn.addEventListener("click", () => {
@@ -87,7 +117,7 @@
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
       oscillator = audioCtx.createOscillator();
-      oscillator.type = "sine"; // can be "sine", "square", "triangle", "sawtooth"
+      oscillator.type = "sine";
       oscillator.frequency.setValueAtTime(slider.value, audioCtx.currentTime);
       oscillator.connect(audioCtx.destination);
       oscillator.start();
