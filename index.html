@@ -73,12 +73,12 @@
 <body>
   <div class="container">
     <h1>Frequency Generator</h1>
-    <input type="range" id="freqSlider" min="20" max="12000" value="440" step="1">
+    <input type="range" id="freqSlider" min="1" max="12000" value="440" step="1">
     <div class="frequency-display" id="freqDisplay">440 Hz</div>
 
     <div class="manual-input">
       <label for="freqInput">Enter frequency:</label><br>
-      <input type="number" id="freqInput" min="20" max="12000" value="440">
+      <input type="number" id="freqInput" min="1" max="12000" value="440">
     </div>
 
     <button id="playBtn">Play</button>
@@ -95,7 +95,7 @@
     const freqInput = document.getElementById("freqInput");
 
     function updateFrequency(value) {
-      value = Math.min(12000, Math.max(20, value)); // clamp between 20–12000
+      value = Math.min(12000, Math.max(1, value)); // clamp between 1–12000
       slider.value = value;
       freqInput.value = value;
       display.textContent = value + " Hz";
